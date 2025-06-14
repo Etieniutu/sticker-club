@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sticker Club</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    header {
+      background: #ff69b4;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 2rem;
+    }
+    .product {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      background: white;
+    }
+    .product img {
+      max-width: 100%;
+      border-radius: 10px;
+    }
+    .product h3 {
+      margin: 0.5rem 0;
+    }
+    .btn {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+    .btn:hover {
+      background: #e05a9e;
+    }
+    footer {
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    form {
+      margin-top: 2rem;
+      padding: 1rem;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    form textarea {
+      width: 100%;
+      height: 100px;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sticker Club</h1>
+    <p>Elegí tus stickers o pedilos personalizados</p>
+  </header>
+
+  <div class="container">
+    <h2>Catálogo</h2>
+
+    <div class="product">
+      <img src="https://via.placeholder.com/400x300?text=Sticker+1" alt="Sticker 1">
+      <h3>Sticker Meme #1</h3>
+      <p>$500</p>
+      <button class="btn" onclick="addToCart('Sticker Meme #1', 500)">Agregar al carrito</button>
+    </div>
+
+    <div class="product">
+      <img src="https://via.placeholder.com/400x300?text=Sticker+2" alt="Sticker 2">
+      <h3>Sticker Cute #2</h3>
+      <p>$600</p>
+      <button class="btn" onclick="addToCart('Sticker Cute #2', 600)">Agregar al carrito</button>
+    </div>
+
+    <h2>🛒 Carrito</h2>
+    <ul id="cart"></ul>
+    <p><strong>Total:</strong> $<span id="total">0</span></p>
+    <a class="btn" id="checkoutBtn" href="#" target="_blank">Finalizar pedido por WhatsApp</a>
+
+    <form onsubmit="sendCustomOrder(event)">
+      <h2>📥 Pedido personalizado</h2>
+      <label for="customMsg">Contanos qué querés:</label>
+      <textarea id="customMsg" placeholder="Quiero un sticker con mi gato en estilo anime..."></textarea>
+      <button type="submit" class="btn">Enviar por WhatsApp</button>
+    </form>
+  </div>
+
+  <footer>
+    <p>📲 Instagram: <a href="https://instagram.com/etien__ds" style="color:#ff69b4;">@etien__ds</a></p>
+    <p>💬 WhatsApp: <a href="https://wa.me/543435354050" style="color:#ff69b4;">+54 343 535-4050</a></p>
+    <p>&copy; 2025 Sticker Club</p>
+  </footer>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem('stickerCart')) || [];
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
+      localStorage.setItem('stickerCart', JSON.stringify(cart));
+      updateCart();
+    }
+
+    function updateCart() {
+      const cartList = document.getElementById("cart");
+      const totalEl = document.getElementById("total");
+      const checkoutBtn = document.getElementById("checkoutBtn");
+
+      cartList.innerHTML = "";
+      let total = 0;
+      cart.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = `${item.name} - $${item.price}`;
+        cartList.appendChild(li);
+        total += item.price;
+      });
+
+      totalEl.textContent = total;
+
+      const message = encodeURIComponent(`¡Hola! Quiero pedir estos stickers:%0A${cart.map(i => `- ${i.name} ($${i.price})`).join('%0A')}%0ATotal: $${total}`);
+      checkoutBtn.href = `https://wa.me/543435354050?text=${message}`;
+    }
+
+    function sendCustomOrder(event) {
+      event.preventDefault();
+      const customMsg = document.getElementById("customMsg").value;
+      if (!customMsg.trim()) {
+        alert("Por favor, escribí tu pedido personalizado.");
+        return;
+      }
+      const encoded = encodeURIComponent("¡Hola! Quiero un pedido personalizado:%0A" + customMsg);
+      window.open(`https://wa.me/543435354050?text=${encoded}`, '_blank');
+    }
+
+    updateCart();
+  </script>
+</body>
+</html>
